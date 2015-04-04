@@ -64,7 +64,7 @@ import org.json.JSONObject;
 import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
-import android.webkit.CookieManager;
+import org.xwalk.core.internal.XWalkCookieManager;
 
 public class FileTransfer extends CordovaPlugin {
 
@@ -81,6 +81,12 @@ public class FileTransfer extends CordovaPlugin {
 
     private static HashMap<String, RequestContext> activeRequests = new HashMap<String, RequestContext>();
     private static final int MAX_BUFFER_SIZE = 16 * 1024;
+    
+    private XWalkCookieManager mCookieManager = null;
++
++    public FileTransfer() {
++        mCookieManager = new XWalkCookieManager();
++    }
 
     private static final class RequestContext {
         String source;
@@ -215,28 +221,7 @@ public class FileTransfer extends CordovaPlugin {
 
     private String getCookies(final String target) {
         boolean gotCookie = false;
-        String cookie = null;
-        Class webViewClass = webView.getClass();
-        try {
-            Method gcmMethod = webViewClass.getMethod("getCookieManager");
-            Class iccmClass  = gcmMethod.getReturnType();
-            Method gcMethod  = iccmClass.getMethod("getCookie");
-
-            cookie = (String)gcMethod.invoke(
-                        iccmClass.cast(
-                            gcmMethod.invoke(webView)
-                        ), target);
-
-            gotCookie = true;
-        } catch (NoSuchMethodException e) {
-        } catch (IllegalAccessException e) {
-        } catch (InvocationTargetException e) {
-        } catch (ClassCastException e) {
-        }
-
-        if (!gotCookie) {
-            cookie = CookieManager.getInstance().getCookie(target);
-        }
+        String cookie = mCookieManager.getCookie(target);
 
         return cookie;
     }
