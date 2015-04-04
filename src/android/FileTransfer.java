@@ -83,10 +83,10 @@ public class FileTransfer extends CordovaPlugin {
     private static final int MAX_BUFFER_SIZE = 16 * 1024;
     
     private XWalkCookieManager mCookieManager = null;
-+
-+    public FileTransfer() {
-+        mCookieManager = new XWalkCookieManager();
-+    }
+
+    public FileTransfer() {
+        mCookieManager = new XWalkCookieManager();
+    }
 
     private static final class RequestContext {
         String source;
